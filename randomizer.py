@@ -40,7 +40,7 @@ def generate_quote():
     total_range = sheet_name + 'D1:D1'
     total = read_spreadsheet(service, spreadsheet_id, total_range)
     questions_count = int(total[0][0])
-    row = random.randrange(2, questions_count + 1)
+    row = random.randrange(2, questions_count + 2)  # 2: header + stop
     # Get random row value
     question_range = '{}B{}:B{}'.format(sheet_name, row, row)
     question = read_spreadsheet(service, spreadsheet_id, question_range)
