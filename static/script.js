@@ -10,9 +10,9 @@ function sendHttpRequest(method, url, callback) {
 }
 
 function newQuote() {
-    document.getElementById('quote_holder').innerHTML = 'Loading';
+    document.getElementById('quote-holder').innerHTML = "Catchin` one...";
     sendHttpRequest('GET', '/quote', function (response) {
-        document.getElementById('quote_holder').innerHTML = response;
+        document.getElementById('quote-holder').innerHTML = response;
     });
 }
 
