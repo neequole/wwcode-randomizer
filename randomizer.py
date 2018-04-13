@@ -1,3 +1,5 @@
+import json
+import os
 import random
 
 from flask import Flask, render_template, jsonify
@@ -13,8 +15,14 @@ app = Flask(__name__)
 
 def connect():
     """ Creates Google spreadsheet service """
-    credentials = service_account.Credentials.from_service_account_file(
-        SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+    # Get first from environment variable before attempting json file
+    environ_credential = os.environ.get('GOOGLE_CREDENTIALS')
+    if environ_credential:
+        credentials = service_account.Credentials.from_service_account_info(
+            json.loads(environ_credential), scopes=SCOPES)
+    else:
+        credentials = service_account.Credentials.from_service_account_file(
+            SERVICE_ACCOUNT_FILE, scopes=SCOPES)
     service = discovery.build('sheets', 'v4', credentials=credentials)
     return service
 
