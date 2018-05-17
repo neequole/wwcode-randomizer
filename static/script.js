@@ -16,4 +16,12 @@ function newQuote() {
     });
 }
 
+function downloadCSV() {
+    var downloadLink = document.getElementById('download-link');
+    downloadLink.innerHTML = 'Downloading...';
+    sendHttpRequest('GET', '/download', function (response) {
+        downloadLink.innerHTML = 'Download';
+    });
+}
+
 newQuote();

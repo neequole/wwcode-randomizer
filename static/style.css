@@ -1,3 +1,8 @@
+:root {
+  --blue: #0D47A1;
+}
+
+
 html, body {
     height: 100vh;
     width: 100%;
@@ -34,8 +39,8 @@ body {
 .md-button {
     width: 60%;
     background-color: transparent;
-    border: dotted 1px #0D47A1;
-    color: #0D47A1;
+    border: dotted 1px var(--blue);
+    color: var(--blue);
     padding: 20px;
     text-align: center;
     font-weight: bold;
@@ -46,4 +51,10 @@ body {
 
 .md-button:hover {
     background-color: #1E88E5;
+}
+
+#download-link {
+    font-size: 12px;
+    color: var(--blue);
+    text-decoration: none;
 }
