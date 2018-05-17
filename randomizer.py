@@ -17,6 +17,8 @@ SERVICE_ACCOUNT_FILE = 'client_secret.json'
 
 app = Flask(__name__)
 
+random_rows = set()
+
 
 def connect():
     """ Creates Google drive service """
@@ -63,8 +65,14 @@ def generate_quote():
     if not path.exists():
         download_spreadsheet()
     questions = read_csv()
-    # Generate random row number
+    # Generate new random row number
     row = random.randrange(0, len(questions))
+    while row in random_rows:
+        row = random.randrange(0, len(questions))
+    random_rows.add(row)
+    # Free up rows to avoid infinite loop
+    if len(random_rows) == len(questions):
+        random_rows.clear()
     return jsonify(questions[row]['Your question'])
 
 
