@@ -1,21 +1,21 @@
 import json
 import os
 import random
-import io
 
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, Response
 from google.oauth2 import service_account
 from googleapiclient import discovery
 from googleapiclient.http import MediaIoBaseDownload
 
-SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
+FILE_ID = '1vh6cKhIPFQMq-F1vdviA5Rud6-fieBG-d8WaIbKW3jY'
+SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
 SERVICE_ACCOUNT_FILE = 'client_secret.json'
 
 app = Flask(__name__)
 
 
 def connect():
-    """ Creates Google spreadsheet service """
+    """ Creates Google drive service """
     # Get first from environment variable before attempting json file
     environ_credential = os.environ.get('GOOGLE_CREDENTIALS')
     if environ_credential:
@@ -24,7 +24,7 @@ def connect():
     else:
         credentials = service_account.Credentials.from_service_account_file(
             SERVICE_ACCOUNT_FILE, scopes=SCOPES)
-    service = discovery.build('sheets', 'v4', credentials=credentials)
+    service = discovery.build('drive', 'v3', credentials=credentials)
     return service
 
 
@@ -58,27 +58,13 @@ def generate_quote():
 
 @app.route('/download')
 def download_sheet():
-    scope2 = ['https://www.googleapis.com/auth/drive.readonly']
-    environ_credential = os.environ.get('GOOGLE_CREDENTIALS')
-    if environ_credential:
-        credentials = service_account.Credentials.from_service_account_info(
-            json.loads(environ_credential), scopes=scope2)
-    else:
-        credentials = service_account.Credentials.from_service_account_file(
-            SERVICE_ACCOUNT_FILE, scopes=scope2)
-    service = discovery.build('drive', 'v3', credentials=credentials)
-    file_id = '1vh6cKhIPFQMq-F1vdviA5Rud6-fieBG-d8WaIbKW3jY'
-    request = service.files().export_media(fileId=file_id, mimeType='text/csv')
-    # fh = io.BytesIO()
-    with open("test.csv", "wb") as fh:
+    """ Downloads Google spreadsheet as CSV file """
+    service = connect()
+    request = service.files().export_media(fileId=FILE_ID, mimeType='text/csv')
+    with open('questions.csv', 'wb') as fh:
         downloader = MediaIoBaseDownload(fh, request)
         done = False
         while done is False:
             status, done = downloader.next_chunk()
             print("Download %d%%." % int(status.progress() * 100))
-
-        # files = service.files().list(
-    #     q='name="%s" and mimeType="%s"' % ('Python Questions (Responses)',
-    #                                        'application/vnd.google-apps.spreadsheet'),
-    #     orderBy='modifiedTime desc,name').execute().get('files', [])
-    # print(files)
+    return Response(status=200)
