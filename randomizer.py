@@ -4,7 +4,7 @@ import random
 import pathlib
 import csv
 
-from flask import Flask, render_template, jsonify, Response
+from flask import Flask, render_template, jsonify, Response, session
 from google.oauth2 import service_account
 from googleapiclient import discovery
 from googleapiclient.http import MediaIoBaseDownload
@@ -16,8 +16,7 @@ SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
 SERVICE_ACCOUNT_FILE = 'client_secret.json'
 
 app = Flask(__name__)
-
-random_rows = set()
+app.secret_key = 'test'
 
 
 def connect():
@@ -67,16 +66,24 @@ def generate_quote():
     questions = read_csv()
     # Generate new random row number
     row = random.randrange(0, len(questions))
-    while row in random_rows:
-        row = random.randrange(0, len(questions))
-    random_rows.add(row)
+    random_rows = session.get('random_rows', [])
     # Free up rows to avoid infinite loop
     if len(random_rows) == len(questions):
-        random_rows.clear()
+        random_rows = []
+    while row in random_rows:
+        row = random.randrange(0, len(questions))
+    random_rows.append(row)
+    session['random_rows'] = random_rows
     return jsonify(questions[row]['Your question'])
 
 
 @app.route('/download')
 def download():
     download_spreadsheet()
+    return Response(status=200)
+
+
+@app.route('/refresh', methods=['POST'])
+def refresh_session():
+    session.pop('random_rows', None)
     return Response(status=200)
