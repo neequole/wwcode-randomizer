@@ -9,11 +9,6 @@ function sendHttpRequest(method, url, callback) {
     }
 }
 
-function newSession() {
-    sendHttpRequest('POST', '/refresh', function (response) {
-        newQuote();
-    });
-}
 
 function newQuote() {
     document.getElementById('quote-holder').innerHTML = "Catchin` one...";
@@ -30,4 +25,4 @@ function downloadCSV() {
     });
 }
 
-newSession();
+newQuote();
