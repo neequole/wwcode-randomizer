@@ -17,7 +17,7 @@ SERVICE_ACCOUNT_FILE = 'client_secret.json'
 
 app = Flask(__name__)
 
-if os.getenv('APP_ENV', 'PRD') == 'PRD':
+if os.getenv('FLASK_ENV') == 'production':
     app.secret_key = os.getenv('APP_SECRET_KEY')
 else:
     app.secret_key = 'development'
