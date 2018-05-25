@@ -15,8 +15,9 @@ FILE_ID = '1vh6cKhIPFQMq-F1vdviA5Rud6-fieBG-d8WaIbKW3jY'
 SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
 SERVICE_ACCOUNT_FILE = 'client_secret.json'
 
-app = Flask(__name__)
-app.secret_key = 'test'
+app = Flask(__name__, instance_relative_config=True)
+app.config.from_object('config.default')
+app.config.from_envvar('APP_CONFIG_FILE')
 
 
 def connect():
