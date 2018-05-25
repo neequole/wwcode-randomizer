@@ -16,7 +16,11 @@ SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
 SERVICE_ACCOUNT_FILE = 'client_secret.json'
 
 app = Flask(__name__)
-app.secret_key = 'test'
+
+if os.getenv('APP_ENV', 'PRD') == 'PRD':
+    app.secret_key = os.getenv('APP_SECRET_KEY')
+else:
+    app.secret_key = 'development'
 
 
 def connect():
